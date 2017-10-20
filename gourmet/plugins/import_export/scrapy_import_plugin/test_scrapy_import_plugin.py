@@ -10,6 +10,7 @@ import datetime
 
 from gourmet.plugins.import_export.scrapy_import_plugin.essenUndTrinken_plugin import EssenUndTrinkenPlugin
 from gourmet.plugins.import_export.scrapy_import_plugin.brigitte_plugin import BrigittePlugin
+from gourmet.plugins.import_export.scrapy_import_plugin.bildderfrau_plugin import BildDerFrauPlugin
 
 class FileScrambleWrapped(object):
     def __init__(self, file_):
@@ -73,6 +74,15 @@ class TestScrapyImportersMeta(type):
                       "http://www.brigitte.de/rezepte/marinierter-lachs-mit-limetten-aioli-10554098.html",
                       # Here no ingredient groups
                       "http://www.brigitte.de/rezepte/roestkartoffeln-10554078.html",
+                      ]
+            }
+           )
+                
+        description.append(
+            {
+                "plugin": BildDerFrauPlugin,
+                "urls":[
+                      "https://www.bildderfrau.de/kochen-backen/rezepte/article206610025/Vegetarisches-Gulasch-mit-Kartoffeln-und-Paprika.html",
                       ]
             }
            )        
