@@ -1,4 +1,5 @@
 from gourmet.plugin import PluginPlugin
+import re
 
 class EssenUndTrinkenPlugin (PluginPlugin):
     """ This is a plugin for the german Essen & Trinken page to import recipes
@@ -21,32 +22,31 @@ class EssenUndTrinkenPlugin (PluginPlugin):
                 recipe = dict()
                 recipe['source'] = "Essen & Trinken"
                 
-                recipe['title'] = selector.xpath("//span[@itemprop='name']/text()").extract()[0]
-                ingsRaw = selector.xpath("//span[@itemprop='ingredients']")
+                recipe['title'] = selector.xpath("//span[@class='headline-title']/text()").extract()[0]
+                ingsRaw = selector.xpath('//ul[@class="ingredients-list"]/li')
                 ingredientsWithGroups = []
                 ingredients = []
                 for ing in ingsRaw:
-                    groupRaw = ing.xpath("span[@class='recipe_subheadline']/text()")
-                    if len(groupRaw) > 0:
+                    group = ing.css(".ingredients-zwiti::text").extract_first()
+                    if group != None and len(group) > 0:
                         # We have a group
-                        group = " ".join( groupRaw.extract() )
                         gDict = { 'name':group, 'ingredients':[] }
                         ingredientsWithGroups.append( gDict )
                         ingredients = gDict['ingredients']
                     else:
-                        ingredients.append(" ".join( ing.xpath("span/text()").extract() ) )
+                        ingredients.append( re.sub( "\s{2,}", " ",   ing.css("::text").extract_first().strip() ) )
                         
                 recipe['ingredients'] = ingredients if len( ingredientsWithGroups ) == 0 else ingredientsWithGroups 
-                recipeYield = selector.xpath("//span[@itemprop='recipeYield']/text()").extract()[0]
+                recipeYield = selector.css('.servings::text').extract_first()
                 recipeYield = [int(s) for s in recipeYield.split() if s.isdigit()]
                 if len(recipeYield) != 1:
                     raise RuntimeError("Unable to parse yield from webpage!")
 
                 recipe['servings'] = recipeYield[0]
-                recipe['cooktime'] = selector.xpath("//span[@class='cooktime']/text()").extract()[0]
+                recipe['cooktime'] = selector.css(".time-preparation::text").re_first(r'(\d+ \w+)')
                 
-                recipe['instructions'] = "\n\n".join( selector.xpath("//span[@itemprop='recipeInstructions']/p/text()").extract() )
-                recipe['imageUrl'] = selector.xpath("//img[@id='recipePreviewImage']/@src").extract()[0]
+                recipe['instructions'] = "\n\n".join( selector.xpath('//ul[@class="preparation"]/li/div/text()').extract() )
+                recipe['imageUrl'] = "http:" + selector.xpath("//figure[@class='recipe-img']/img/@data-fullimage").extract_first()
 
                 return recipe;
 
