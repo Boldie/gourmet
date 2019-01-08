@@ -28,12 +28,12 @@ class BildDerFrauPlugin (PluginPlugin):
                 m = re.match(u'Zutaten f\xfcr (\d+) Portionen', selector.xpath('//h3[@class="icon__zutaten"]/text()').extract()[0])
                 recipe['servings'] = int(m.group(1)) if m else 0
                 
-                recipe['cooktime'] = selector.xpath('//div[h3[text()[contains(.,"Koch-/Backzeit")]]]/ul/li/text()').re_first(r'(\d+ Minuten)')
+                recipe['cooktime'] = selector.xpath('//div[h3[text()[contains(.,"Zubereitungszeit")]]]/ul/li/text()').re_first(r'\(.*?(\d+ Minuten).*\)')
                 recipe['preptime'] = selector.xpath('//div[h3[text()[contains(.,"Zubereitungszeit")]]]/ul/li/text()').re_first(r'(\d+ Minuten)')
 
                 
                 
-                recipe['instructions'] = "\n\n".join( selector.xpath('//h2[contains(@id,"Und-so-wird")]/following-sibling::ol/li/text()').extract() )
+                recipe['instructions'] = "\n\n".join( selector.xpath('//h3[contains(@id,"Und-so-wird")]/following-sibling::ol/li/text()').extract() )
                 recipe['imageUrl'] = selector.xpath("//figure/picture/source/@srcset")[2].extract()
 
                 return recipe;
