@@ -1,5 +1,5 @@
-from essenUndTrinken_plugin import EssenUndTrinkenPlugin
-from brigitte_plugin import BrigittePlugin
-from bildderfrau_plugin import BildDerFrauPlugin
+from . import essenUndTrinken_plugin
+from . import brigitte_plugin
+from . import bildderfrau_plugin
 
-plugins = [EssenUndTrinkenPlugin, BrigittePlugin, BildDerFrauPlugin]
+plugins = [essenUndTrinken_plugin.EssenUndTrinkenPlugin, brigitte_plugin.BrigittePlugin, bildderfrau_plugin.BildDerFrauPlugin]

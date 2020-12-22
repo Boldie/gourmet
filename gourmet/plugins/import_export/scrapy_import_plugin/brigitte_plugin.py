@@ -22,7 +22,7 @@ class BrigittePlugin (PluginPlugin):
                 recipe = dict()
                 recipe['source'] = "Brigitte"
                 
-                recipe['title'] = selector.css(".article-headline-recipe::text").extract_first()
+                recipe['title'] = selector.css(".u-typo--article-title::text").extract_first()
                 
                 ingredientsWithGroups = []
                 ingredients = []
@@ -46,7 +46,8 @@ class BrigittePlugin (PluginPlugin):
                         ingredients.append(" ".join( filter(lambda k: len(k) > 0, [amount, unit, name, add] )) )
                                     
                 recipe['ingredients'] = ingredients if len( ingredientsWithGroups ) == 0 else ingredientsWithGroups
-                recipe['servings'] = int(selector.css(".o-article_select")[0].xpath(".//option[@selected]/text()").extract_first())
+                recipe['servings'] = int(selector.css(".recipe-ingredients__value::text").extract_first().strip())
+			
                 
                 total = selector.xpath("//time[@itemprop='totalTime']/text()").extract_first()
                 m = re.search(u"([0-9]+)[\s\xa0\n]*(\S+)", total,re.MULTILINE | re.DOTALL)

@@ -1,5 +1,5 @@
 import unittest
-import md5
+from hashlib import md5
 import requests
 from scrapy.selector import Selector
 import json
@@ -104,9 +104,8 @@ class TestScrapyImportersMeta(type):
             self._testPlugin(url, pluginInstance)
         return _testCase 
     
-class TestScrapyImporters(unittest.TestCase):
-    __metaclass__ = TestScrapyImportersMeta
- 
+class TestScrapyImporters(unittest.TestCase, metaclass=TestScrapyImportersMeta):
+    
     def _downloadItem(self, url, urlHash):
         maxCacheTime = datetime.timedelta(days=7)
         testWebsiteCacheDir = os.path.join( os.path.dirname(os.path.realpath(__file__)), 'testWebsiteCache' )
@@ -129,7 +128,7 @@ class TestScrapyImporters(unittest.TestCase):
             r = requests.get(url)
             self.assertEqual(r.status_code, 200, "Problem downloading page")
             with open(cacheFileName, 'w') as outfile:
-                outfile.write(r.content)
+                outfile.write(r.content.decode('utf-8'))
             with open(metaFileName, 'w') as outfile:
                 outfile.write( str(now) )
             content = r.content
@@ -141,7 +140,7 @@ class TestScrapyImporters(unittest.TestCase):
         remote and pass it to the parser. Finally the received recipe structure
         will be compared against reference data inside testData.
         """
-        urlHash = md5.new(url).hexdigest()
+        urlHash = md5(url.encode('utf-8')).hexdigest()
         # print("Testing Url: %s hash: %s" %(url,urlHash) )
                 
         data = self._downloadItem( url, urlHash )
@@ -186,5 +185,5 @@ class TestScrapyImporters(unittest.TestCase):
 if __name__ == '__main__':
     unittest.main()
     # Run script from gourmet top directory with:
-    # export PYTHONPATH="$(pwd)";  python gourmet/plugins/import_export/scrapy_import_plugin/test_scrapy_import_plugin.py
+    # export PYTHONPATH="$(pwd)"; python3 gourmet/plugins/import_export/scrapy_import_plugin/test_scrapy_import_plugin.py
     

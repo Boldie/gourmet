@@ -1,6 +1,6 @@
 from gourmet.plugin import ImporterPlugin, PluginPlugin
 from gourmet.plugin_loader import Pluggable
-import scrapy_importer
+from . import scrapy_importer
 from gettext import gettext as _
 
 class ScrapyWebImporter (ImporterPlugin, Pluggable):
